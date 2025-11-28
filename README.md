@@ -1,0 +1,75 @@
+# patch-seq.nvim
+
+Neovim LSP support for the [Seq programming language](https://github.com/navicore/patch-seq).
+
+## Features
+
+- Real-time diagnostics (parse errors, type errors)
+- Hover information for word signatures (coming soon)
+- Go-to-definition (coming soon)
+
+## Requirements
+
+- Neovim 0.10+ (for `vim.lsp.start` and `vim.filetype.add`)
+- `seq-lsp` binary in your PATH
+
+### Installing seq-lsp
+
+Build and install from the [patch-seq](https://github.com/navicore/patch-seq) repository:
+
+```bash
+git clone https://github.com/navicore/patch-seq
+cd patch-seq
+just install-lsp
+```
+
+This installs `seq-lsp` to `~/.local/bin/`. Make sure this directory is in your `PATH`.
+
+## Installation
+
+### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+  "navicore/patch-seq.nvim",
+  ft = "seq",
+  opts = {},
+}
+```
+
+### With custom configuration
+
+```lua
+{
+  "navicore/patch-seq.nvim",
+  ft = "seq",
+  opts = {
+    -- Custom path to seq-lsp binary (optional)
+    cmd = { "/path/to/seq-lsp" },
+
+    -- LSP capabilities (optional, for completion plugins)
+    capabilities = require("cmp_nvim_lsp").default_capabilities(),
+
+    -- on_attach callback (optional)
+    on_attach = function(client, bufnr)
+      -- Your keymaps here
+    end,
+  },
+}
+```
+
+### Manual setup
+
+If you prefer manual configuration:
+
+```lua
+require("seq-lsp").setup({})
+```
+
+## Usage
+
+Once installed, open any `.seq` file and the LSP will start automatically. Diagnostics appear inline as you type.
+
+## License
+
+MIT
