@@ -1,10 +1,12 @@
 # patch-seq.nvim
 
-Neovim LSP support for the [Seq programming language](https://github.com/navicore/patch-seq).
+Neovim support for the [Seq programming language](https://github.com/navicore/patch-seq).
 
 ## Features
 
-- Real-time diagnostics (parse errors, type errors)
+- **Syntax highlighting** - Keywords, builtins, strings, comments, stack effects
+- **Auto-indentation** - Smart indentation for word definitions and control flow
+- **LSP integration** - Real-time diagnostics (parse errors, type errors)
 - Hover information for word signatures (coming soon)
 - Go-to-definition (coming soon)
 
