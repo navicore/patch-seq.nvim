@@ -16,6 +16,11 @@ M.setup = function(opts)
   -- Default command - assumes seq-lsp is in PATH
   local cmd = opts.cmd or { "seq-lsp" }
 
+  -- Build initialization options for LSP
+  local init_options = {
+    inlay_hints = opts.inlay_hints or false,
+  }
+
   -- Set up LSP when opening .seq files
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "seq",
@@ -31,6 +36,7 @@ M.setup = function(opts)
         ) or vim.fn.getcwd(),
         capabilities = opts.capabilities,
         on_attach = opts.on_attach,
+        init_options = init_options,
       })
     end,
   })

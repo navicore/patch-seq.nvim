@@ -6,9 +6,11 @@ Neovim support for the [Seq programming language](https://github.com/navicore/pa
 
 - **Syntax highlighting** - Keywords, builtins, strings, comments, stack effects
 - **Auto-indentation** - Smart indentation for word definitions and control flow
-- **LSP integration** - Real-time diagnostics (parse errors, type errors)
-- Hover information for word signatures (coming soon)
-- Go-to-definition (coming soon)
+- **LSP integration** - Real-time diagnostics (parse errors, type errors, undefined words)
+- **Completions** - Builtins, local words, included modules
+- **Hover** - Stack effect signatures for words
+- **Breadcrumbs** - Document symbols showing word definitions in your statusline
+- **Inlay hints** - Inline type signatures (opt-in, off by default)
 
 ## Requirements
 
@@ -17,15 +19,19 @@ Neovim support for the [Seq programming language](https://github.com/navicore/pa
 
 ### Installing seq-lsp
 
-Build and install from the [patch-seq](https://github.com/navicore/patch-seq) repository:
+Install from crates.io:
+
+```bash
+cargo install seq-lsp
+```
+
+Or build from source:
 
 ```bash
 git clone https://github.com/navicore/patch-seq
 cd patch-seq
-just install-lsp
+cargo install --path lsp
 ```
-
-This installs `seq-lsp` to `~/.local/bin/`. Make sure this directory is in your `PATH`.
 
 ## Installation
 
@@ -46,6 +52,9 @@ This installs `seq-lsp` to `~/.local/bin/`. Make sure this directory is in your 
   "navicore/patch-seq.nvim",
   ft = "seq",
   opts = {
+    -- Enable inlay hints (off by default)
+    inlay_hints = true,
+
     -- Custom path to seq-lsp binary (optional)
     cmd = { "/path/to/seq-lsp" },
 
