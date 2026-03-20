@@ -1,0 +1,12 @@
+seq-lsp-contents	seq-lsp.txt	/*seq-lsp-contents*
+seq-lsp-features	seq-lsp.txt	/*seq-lsp-features*
+seq-lsp-filetype	seq-lsp.txt	/*seq-lsp-filetype*
+seq-lsp-introduction	seq-lsp.txt	/*seq-lsp-introduction*
+seq-lsp-opt-capabilities	seq-lsp.txt	/*seq-lsp-opt-capabilities*
+seq-lsp-opt-cmd	seq-lsp.txt	/*seq-lsp-opt-cmd*
+seq-lsp-opt-inlay_hints	seq-lsp.txt	/*seq-lsp-opt-inlay_hints*
+seq-lsp-opt-on_attach	seq-lsp.txt	/*seq-lsp-opt-on_attach*
+seq-lsp-options	seq-lsp.txt	/*seq-lsp-options*
+seq-lsp-requirements	seq-lsp.txt	/*seq-lsp-requirements*
+seq-lsp-setup	seq-lsp.txt	/*seq-lsp-setup*
+seq-lsp.txt	seq-lsp.txt	/*seq-lsp.txt*

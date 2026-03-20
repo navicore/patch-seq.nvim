@@ -1,0 +1,140 @@
+*seq-lsp.txt*	Neovim support for the Seq programming language
+
+Author: Ed Sweeney
+License: MIT
+
+==============================================================================
+CONTENTS                                                    *seq-lsp-contents*
+
+    1. Introduction ............................ |seq-lsp-introduction|
+    2. Requirements ............................ |seq-lsp-requirements|
+    3. Setup ................................... |seq-lsp-setup|
+    4. Options ................................. |seq-lsp-options|
+    5. Features ................................ |seq-lsp-features|
+    6. Filetype ................................ |seq-lsp-filetype|
+
+==============================================================================
+1. INTRODUCTION                                         *seq-lsp-introduction*
+
+patch-seq.nvim provides IDE features for the Seq programming language, a
+stack-based concatenative language.
+
+  https://github.com/navicore/patch-seq
+
+The plugin handles syntax highlighting, auto-indentation, and filetype
+detection locally. All semantic features (diagnostics, completions, hover,
+symbols, inlay hints) are provided by the external `seq-lsp` language server.
+
+==============================================================================
+2. REQUIREMENTS                                         *seq-lsp-requirements*
+
+- Neovim 0.10 or later
+- `seq-lsp` binary in your PATH
+
+Install seq-lsp from crates.io: >bash
+    cargo install seq-lsp
+<
+Or build from source: >bash
+    git clone https://github.com/navicore/patch-seq
+    cd patch-seq
+    cargo install --path lsp
+<
+==============================================================================
+3. SETUP                                                       *seq-lsp-setup*
+
+Using lazy.nvim: >lua
+    {
+      "navicore/patch-seq.nvim",
+      ft = "seq",
+      opts = {},
+    }
+<
+Manual setup: >lua
+    require("seq-lsp").setup({})
+<
+With all options: >lua
+    require("seq-lsp").setup({
+      cmd = { "seq-lsp" },
+      inlay_hints = false,
+      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      on_attach = function(client, bufnr)
+        -- your keymaps here
+      end,
+    })
+<
+==============================================================================
+4. OPTIONS                                                   *seq-lsp-options*
+
+                                                            *seq-lsp-opt-cmd*
+cmd ~
+    Type: `string[]`
+    Default: `{ "seq-lsp" }`
+
+    Command to start the language server. Override this if `seq-lsp` is not
+    in your PATH.
+
+                                                    *seq-lsp-opt-inlay_hints*
+inlay_hints ~
+    Type: `boolean`
+    Default: `false`
+
+    Enable inlay hints for inline type signatures. Passed to the server as
+    an initialization option.
+
+                                                   *seq-lsp-opt-capabilities*
+capabilities ~
+    Type: `table` or `nil`
+    Default: `nil`
+
+    LSP client capabilities. Pass this if you use a completion plugin such
+    as nvim-cmp: >lua
+        capabilities = require("cmp_nvim_lsp").default_capabilities()
+<
+                                                     *seq-lsp-opt-on_attach*
+on_attach ~
+    Type: `function(client, bufnr)` or `nil`
+    Default: `nil`
+
+    Callback invoked when the LSP client attaches to a buffer. Use this to
+    set buffer-local keymaps or other per-buffer configuration.
+
+==============================================================================
+5. FEATURES                                                 *seq-lsp-features*
+
+Syntax highlighting ~
+    Keywords, builtins, strings, comments, numbers, booleans, stack effect
+    signatures, control flow, and quotations. Uses Vim regex patterns.
+
+Auto-indentation ~
+    Smart indentation for word definitions (`: ... ;`), control flow
+    (`if`/`else`/`then`), and quotations (`[ ... ]`).
+
+Diagnostics ~
+    Real-time parse errors, type errors, and undefined word warnings via
+    the LSP server.
+
+Completions ~
+    Builtins, locally defined words, and words from included modules.
+
+Hover ~
+    Stack effect signatures for words under the cursor.
+
+Document symbols ~
+    Word definitions appear in breadcrumbs and symbol lists.
+
+Inlay hints ~
+    Inline type signatures (opt-in via |seq-lsp-opt-inlay_hints|).
+
+==============================================================================
+6. FILETYPE                                                 *seq-lsp-filetype*
+
+Files with the `.seq` extension are detected as filetype `seq`.
+
+Comment format: `# %s`
+
+The LSP server starts automatically when a `seq` file is opened. Root
+directory is determined by searching upward for `.git`, `Cargo.toml`, or
+`justfile`. Falls back to the current working directory.
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
