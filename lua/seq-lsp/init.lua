@@ -38,9 +38,18 @@ local function register_user_command()
           { "quick", "doc", "cat" }
         )
       end
-      -- Completion for the argument to doc/cat would require a synchronous
-      -- LSP call; skip for now and let the user type the word themselves.
-      return {}
+      local sub = parts[2]
+      local candidates
+      if sub == "cat" then
+        candidates = quick.cached_group_names()
+      elseif sub == "doc" then
+        candidates = quick.cached_word_names()
+      end
+      if not candidates then return {} end
+      return vim.tbl_filter(
+        function(s) return s:find(arg_lead, 1, true) == 1 end,
+        candidates
+      )
     end,
   })
 end
@@ -56,6 +65,17 @@ M.setup = function(opts)
   })
 
   register_user_command()
+
+  -- Warm the seq/listWords cache as soon as seq-lsp attaches so command-line
+  -- completion for `:Seq cat <Tab>` and `:Seq doc <Tab>` works on first use.
+  vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if client and client.name == "seq-lsp" then
+        require("seq-lsp.quick").prefetch()
+      end
+    end,
+  })
 
   -- Default command - assumes seq-lsp is in PATH
   local cmd = opts.cmd or { "seq-lsp" }

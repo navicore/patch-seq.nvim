@@ -11,7 +11,15 @@ local function get_client()
   return clients[1]
 end
 
+-- Cached `seq/listWords` response. The word list is built into the seq-lsp
+-- binary, so it never changes within a session; we fetch it once and reuse.
+local cache = nil
+
 local function request_words(cb)
+  if cache then
+    cb(cache)
+    return
+  end
   local client = get_client()
   if not client then
     vim.notify(
@@ -25,8 +33,16 @@ local function request_words(cb)
       vim.notify("seq/listWords failed: " .. vim.inspect(err), vim.log.levels.ERROR)
       return
     end
+    cache = result
     cb(result)
   end)
+end
+
+-- Kick off a fetch in the background to warm the cache. Safe to call
+-- repeatedly; subsequent calls are no-ops once primed.
+function M.prefetch()
+  if cache then return end
+  request_words(function() end)
 end
 
 local function open_float(lines, title)
@@ -195,28 +211,27 @@ function M.show_category(group_name)
   end)
 end
 
--- Returns a flat list of every group name (for command completion).
-function M.all_group_names(cb)
-  request_words(function(result)
-    local names = {}
-    for _, g in ipairs(result.builtins or {}) do table.insert(names, g.name) end
-    for _, g in ipairs(result.stdlib or {}) do table.insert(names, g.name) end
-    cb(names)
-  end)
+-- Synchronous accessors backed by the cache. Return nil if the cache hasn't
+-- been primed yet — used by command-line completion, which can't await an
+-- async LSP request. Call `M.prefetch()` on LspAttach to fill the cache.
+function M.cached_group_names()
+  if not cache then return nil end
+  local names = {}
+  for _, g in ipairs(cache.builtins or {}) do table.insert(names, g.name) end
+  for _, g in ipairs(cache.stdlib or {}) do table.insert(names, g.name) end
+  return names
 end
 
--- Returns a flat list of every word name (for command completion).
-function M.all_word_names(cb)
-  request_words(function(result)
-    local names = {}
-    for _, g in ipairs(result.builtins or {}) do
-      for _, w in ipairs(g.words) do table.insert(names, w.name) end
-    end
-    for _, g in ipairs(result.stdlib or {}) do
-      for _, w in ipairs(g.words) do table.insert(names, w.name) end
-    end
-    cb(names)
-  end)
+function M.cached_word_names()
+  if not cache then return nil end
+  local names = {}
+  for _, g in ipairs(cache.builtins or {}) do
+    for _, w in ipairs(g.words) do table.insert(names, w.name) end
+  end
+  for _, g in ipairs(cache.stdlib or {}) do
+    for _, w in ipairs(g.words) do table.insert(names, w.name) end
+  end
+  return names
 end
 
 return M
