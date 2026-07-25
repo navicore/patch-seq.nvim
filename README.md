@@ -2,6 +2,10 @@
 
 Neovim support for the [Seq programming language](https://github.com/navicore/patch-seq).
 
+**Home Code Repository** is at [git.navicore.tech](https://git.navicore.tech/navicore/patch-seq.nvim)
+
+**PRs and issues** welcome at the [GitHub mirror](https://github.com/navicore/patch-seq.nvim)
+
 ## Features
 
 - **Syntax highlighting** - Keywords, builtins, strings, comments, stack effects
